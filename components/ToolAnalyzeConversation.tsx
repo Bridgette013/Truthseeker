@@ -100,14 +100,24 @@ const ToolAnalyzeConversation: React.FC = () => {
                  <MessageSquare className="w-4 h-4 text-vvv-purple" /> Input Chat Logs
                </span>
                <button 
+                 type="button"
                  onClick={() => fileInputRef.current?.click()}
                  disabled={isExtractingText}
                  className="text-xs bg-vvv-charcoal border border-vvv-divider px-3 py-1.5 rounded-lg hover:border-vvv-purple/50 transition-all flex items-center gap-2"
+                 aria-controls="conversation-screenshot-upload"
                >
                  {isExtractingText ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
                  Add Screenshot
                </button>
-               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
+               <input
+                 id="conversation-screenshot-upload"
+                 type="file"
+                 ref={fileInputRef}
+                 className="hidden"
+                 accept="image/*"
+                 onChange={handleFileUpload}
+                 aria-label="Upload a screenshot to extract chat text"
+               />
             </div>
             
             <textarea

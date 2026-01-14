@@ -86,11 +86,27 @@ const ToolAnalyzeAudio: React.FC<ToolAnalyzeAudioProps> = ({ initialFile, onAnal
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex flex-col gap-4">
-          <div 
+          <div
+            role="button"
+            tabIndex={0}
+            aria-controls="audio-upload"
+            aria-label="Upload an audio file to transcribe and analyze"
             onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click();
+            }}
             className="flex-1 border-2 border-dashed border-vvv-divider hover:border-vvv-purple bg-vvv-surface/50 rounded-xl flex flex-col items-center justify-center cursor-pointer min-h-[250px] transition-colors group"
           >
-            <input type="file" ref={fileInputRef} className="hidden" accept="audio/*" onChange={handleFileChange} />
+            <label htmlFor="audio-upload" className="sr-only">Upload audio file</label>
+            <input
+              id="audio-upload"
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="audio/*"
+              onChange={handleFileChange}
+              aria-label="Upload audio file"
+            />
              {file ? (
                <div className="text-center">
                  <Music className="w-12 h-12 text-vvv-purple mx-auto mb-4" />

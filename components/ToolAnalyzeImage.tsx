@@ -204,7 +204,16 @@ const ToolAnalyzeImage: React.FC<ToolAnalyzeImageProps> = ({ initialFile, onAnal
                                     Load Example Deepfake
                                 </button>
                              </div>
-                             <input type="file" ref={comparisonInputRef} className="hidden" onChange={handleComparisonFileChange} />
+                             <input
+                               id="comparison-image-upload"
+                               type="file"
+                               ref={comparisonInputRef}
+                               className="hidden"
+                               accept="image/*"
+                               aria-label="Upload reference image for comparison"
+                               title="Upload reference image for comparison"
+                               onChange={handleComparisonFileChange}
+                             />
                          </div>
                     ) : (
                         // Slider Comparison View
@@ -257,10 +266,13 @@ const ToolAnalyzeImage: React.FC<ToolAnalyzeImageProps> = ({ initialFile, onAnal
                     `}
                 >
                     <input 
+                    id="image-upload"
                     type="file" 
                     ref={fileInputRef} 
                     className="hidden" 
                     accept="image/*" 
+                    aria-label="Upload image to analyze"
+                    title="Upload image to analyze"
                     onChange={handleFileChange} 
                     />
                     

@@ -1,0 +1,8 @@
+{
+  "name": "TruthSeeker -VVV Digitals",
+  "description": "An advanced anti-catfishing and digital forensics tool powered by Gemini. Analyze images, videos, and audio for signs of manipulation using AI-driven insights or guided manual verification.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TruthSeeker Forensics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- BRAND FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              display: ['Space Grotesk', 'Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              // Existing colors retained for compatibility during migration
+              slate: {
+                850: '#1e293b',
+                900: '#0f172a',
+                950: '#020617',
+              },
+              primary: {
+                DEFAULT: '#3b82f6',
+                500: '#3b82f6',
+                600: '#2563eb',
+              },
+              danger: {
+                DEFAULT: '#ef4444',
+                500: '#ef4444',
+              },
+              // VVV Digitals Brand Palette
+              vvv: {
+                purple: '#6246EA',
+                coral: '#E9622D',
+                charcoal: '#0C0C0E',
+                surface: '#141418',
+                text: '#E9E9E9',
+                muted: '#B9B9C0',
+                divider: '#24242A',
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background-color: #0C0C0E;
+        color: #E9E9E9;
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: #0C0C0E; }
+      ::-webkit-scrollbar-thumb { background: #24242A; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: #6246EA; }
+
+      /* Gradient text utility */
+      .vvv-gradient-text {
+        background: linear-gradient(90deg, #E9622D 0%, #6246EA 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Glow effects */
+      .vvv-glow-purple { box-shadow: 0 0 30px rgba(98, 70, 234, 0.3); }
+      .vvv-glow-coral { box-shadow: 0 0 30px rgba(233, 98, 45, 0.3); }
+      .vvv-glow-purple-lg { box-shadow: 0 0 60px rgba(98, 70, 234, 0.4); }
+
+      /* Animations */
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes pulse-glow {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+
+      .animate-fade-in { animation: fade-in 0.4s ease-out; }
+      .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+      .animate-float { animation: float 3s ease-in-out infinite; }
+
+      /* Card hover effect */
+      .vvv-card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+      .vvv-card-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(98, 70, 234, 0.15);
+        border-color: rgba(98, 70, 234, 0.3);
+      }
+
+      /* Button shine effect */
+      .vvv-btn-shine {
+        position: relative;
+        overflow: hidden;
+      }
+      .vvv-btn-shine::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+        transform: rotate(45deg) translateX(-100%);
+        transition: transform 0.6s;
+      }
+      .vvv-btn-shine:hover::after {
+        transform: rotate(45deg) translateX(100%);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-markdown": "https://esm.sh/react-markdown@^10.1.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

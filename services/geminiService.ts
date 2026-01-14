@@ -1,20 +1,26 @@
 
 
-import { GoogleGenAI, GenerateContentResponse, HarmCategory, HarmBlockThreshold } from "@google/genai";
 import { AnalysisMode, AspectRatio } from "../types";
 import { logger } from "./logger";
 
-// Production API Initialization
-// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+export interface GeminiResponse {
+  text?: string;
+  candidates?: any[];
+}
 
-// Production Safety Settings
-const SAFETY_SETTINGS = [
-  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-];
+async function callGemini(action: string, payload: Record<string, any>): Promise<any> {
+  const response = await fetch("/.netlify/functions/gemini", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ action, payload }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data?.error || `Gemini request failed (${response.status})`);
+  }
+  return data;
+}
 
 /**
  * Helper to handle streaming responses securely with logging
@@ -23,21 +29,17 @@ async function handleStream(
   streamResult: any, 
   onChunk?: (text: string) => void,
   context: string = "Unknown"
-): Promise<GenerateContentResponse> {
+): Promise<GeminiResponse> {
   let fullText = "";
   try {
-    for await (const chunk of streamResult) {
-      const text = chunk.text;
-      if (text) {
-        fullText += text;
-        if (onChunk) onChunk(text);
-      }
-    }
+    const text = typeof streamResult === "string" ? streamResult : (streamResult?.text || "");
+    fullText = text;
+    if (text && onChunk) onChunk(text);
     logger.info(`Stream completed for ${context}`, { length: fullText.length }, "GeminiService");
     return {
       text: fullText,
-      candidates: [{ content: { parts: [{ text: fullText }] } }]
-    } as unknown as GenerateContentResponse;
+      candidates: streamResult?.candidates || [{ content: { parts: [{ text: fullText }] } }]
+    };
   } catch (error) {
     logger.error(`Stream error in ${context}`, error, "GeminiService");
     throw new Error("Analysis stream interrupted due to network or quota issues.");
@@ -52,8 +54,7 @@ export const analyzeImage = async (
   mimeType: string, 
   mode: AnalysisMode,
   onChunk?: (text: string) => void
-): Promise<GenerateContentResponse> => {
-  const model = "gemini-3-pro-preview";
+): Promise<GeminiResponse> => {
   logger.info("Starting Image Analysis", { mode, mimeType }, "GeminiService");
   
   let prompt = "";
@@ -107,20 +108,8 @@ export const analyzeImage = async (
   }
 
   try {
-    const streamResult = await ai.models.generateContentStream({
-      model,
-      contents: {
-        parts: [
-          { inlineData: { mimeType, data: base64Data } },
-          { text: prompt }
-        ]
-      },
-      config: {
-        thinkingConfig: { thinkingBudget: 1024 },
-        safetySettings: SAFETY_SETTINGS,
-      }
-    });
-    return handleStream(streamResult, onChunk, "ImageAnalysis");
+    const result = await callGemini("analyzeImage", { base64Data, mimeType, mode });
+    return handleStream(result?.text || "", onChunk, "ImageAnalysis");
   } catch (e) {
     logger.error("Image Analysis Failed", e, "GeminiService");
     throw e;
@@ -134,8 +123,7 @@ export const analyzeVideo = async (
   base64Data: string, 
   mimeType: string,
   onChunk?: (text: string) => void
-): Promise<GenerateContentResponse> => {
-  const model = "gemini-3-pro-preview";
+): Promise<GeminiResponse> => {
   logger.info("Starting Video Analysis", { mimeType }, "GeminiService");
 
   const prompt = `
@@ -175,20 +163,8 @@ export const analyzeVideo = async (
   `;
 
   try {
-    const streamResult = await ai.models.generateContentStream({
-      model,
-      contents: {
-        parts: [
-          { inlineData: { mimeType, data: base64Data } },
-          { text: prompt }
-        ]
-      },
-       config: {
-        thinkingConfig: { thinkingBudget: 2048 },
-        safetySettings: SAFETY_SETTINGS,
-      }
-    });
-    return handleStream(streamResult, onChunk, "VideoAnalysis");
+    const result = await callGemini("analyzeVideo", { base64Data, mimeType });
+    return handleStream(result?.text || "", onChunk, "VideoAnalysis");
   } catch (e) {
     logger.error("Video Analysis Failed", e, "GeminiService");
     throw e;
@@ -202,8 +178,7 @@ export const analyzeAudio = async (
   base64Data: string, 
   mimeType: string,
   onChunk?: (text: string) => void
-): Promise<GenerateContentResponse> => {
-  const model = "gemini-3-flash-preview"; 
+): Promise<GeminiResponse> => {
   logger.info("Starting Audio Analysis", { mimeType }, "GeminiService");
 
   const prompt = `
@@ -243,19 +218,8 @@ export const analyzeAudio = async (
   `;
 
   try {
-    const streamResult = await ai.models.generateContentStream({
-      model,
-      contents: {
-        parts: [
-          { inlineData: { mimeType, data: base64Data } },
-          { text: prompt }
-        ]
-      },
-      config: {
-        safetySettings: SAFETY_SETTINGS,
-      }
-    });
-    return handleStream(streamResult, onChunk, "AudioAnalysis");
+    const result = await callGemini("analyzeAudio", { base64Data, mimeType });
+    return handleStream(result?.text || "", onChunk, "AudioAnalysis");
   } catch (e) {
     logger.error("Audio Analysis Failed", e, "GeminiService");
     throw e;
@@ -268,25 +232,11 @@ export const analyzeAudio = async (
 export const generateSimulationImage = async (
   prompt: string,
   aspectRatio: AspectRatio
-): Promise<GenerateContentResponse> => {
-  const model = "gemini-3-pro-image-preview";
+): Promise<GeminiResponse> => {
   logger.info("Generating Simulation Image", { aspectRatio }, "GeminiService");
   
   try {
-    const response = await ai.models.generateContent({
-      model,
-      contents: {
-        parts: [{ text: prompt }]
-      },
-      config: {
-        imageConfig: {
-          aspectRatio: aspectRatio,
-          imageSize: "1K" 
-        },
-        safetySettings: SAFETY_SETTINGS,
-      }
-    });
-    return response;
+    return await callGemini("generateSimulationImage", { prompt, aspectRatio });
   } catch (e) {
     logger.error("Simulation Generation Failed", e, "GeminiService");
     throw e;
@@ -299,8 +249,7 @@ export const generateSimulationImage = async (
 export const verifyIdentity = async (
   query: string, 
   onChunk?: (text: string) => void
-): Promise<GenerateContentResponse> => {
-  const model = "gemini-3-flash-preview";
+): Promise<GeminiResponse> => {
   logger.info("Starting Identity Verification", { query }, "GeminiService");
   
   const prompt = `
@@ -313,15 +262,10 @@ export const verifyIdentity = async (
   `;
 
   try {
-    const streamResult = await ai.models.generateContentStream({
-      model,
-      contents: prompt,
-      config: {
-        tools: [{ googleSearch: {} }],
-        safetySettings: SAFETY_SETTINGS,
-      }
-    });
-    return handleStream(streamResult, onChunk, "IdentityVerification");
+    const result = await callGemini("verifyIdentity", { query });
+    // Emit text as a single chunk but keep candidates for grounding metadata.
+    if (result?.text && onChunk) onChunk(result.text);
+    return { text: result?.text || "", candidates: result?.candidates || [] };
   } catch (e) {
     logger.error("Identity Verification Failed", e, "GeminiService");
     throw e;
@@ -334,8 +278,7 @@ export const verifyIdentity = async (
 export const deepForensicThink = async (
   scenarioDescription: string,
   onChunk?: (text: string) => void
-): Promise<GenerateContentResponse> => {
-  const model = "gemini-3-pro-preview";
+): Promise<GeminiResponse> => {
   logger.info("Starting Deep Forensic Analysis", { length: scenarioDescription.length }, "GeminiService");
   
   const prompt = `
@@ -349,15 +292,8 @@ export const deepForensicThink = async (
   `;
 
   try {
-    const streamResult = await ai.models.generateContentStream({
-      model,
-      contents: prompt,
-      config: {
-        thinkingConfig: { thinkingBudget: 32768 },
-        safetySettings: SAFETY_SETTINGS,
-      }
-    });
-    return handleStream(streamResult, onChunk, "DeepForensicThink");
+    const result = await callGemini("deepForensicThink", { scenarioDescription });
+    return handleStream(result?.text || "", onChunk, "DeepForensicThink");
   } catch (e) {
     logger.error("Deep Forensic Analysis Failed", e, "GeminiService");
     throw e;

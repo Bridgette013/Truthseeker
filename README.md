@@ -25,6 +25,13 @@ View your app in AI Studio: https://ai.studio/apps/drive/1qKuOfE1hzkEYX3VaO-QNQx
 2. Build command: `npm run build`
 3. Publish directory: `dist`
 
+## Local dev (recommended)
+
+Because Gemini runs through Netlify Functions, the easiest local workflow is:
+
+1. Install Netlify CLI (one-time): `npm i -g netlify-cli`
+2. Run: `netlify dev`
+
 ### Important security note
 
 Do not ship API keys to the browser. If your Gemini calls happen in client-side code, the key can be exposed.

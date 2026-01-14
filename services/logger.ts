@@ -71,7 +71,7 @@ class Logger {
 
   public debug(message: string, data?: any, context?: string) {
     // Only log debug in dev mode
-    if (process.env.NODE_ENV !== 'production') {
+    if (import.meta.env.DEV) {
       this.persist(this.createEntry(LogLevel.DEBUG, message, data, context));
     }
   }

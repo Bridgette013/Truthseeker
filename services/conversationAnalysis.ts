@@ -1,6 +1,16 @@
-import { GoogleGenAI } from '@google/genai';
+async function callGemini(action: string, payload: Record<string, any>): Promise<any> {
+  const response = await fetch("/.netlify/functions/gemini", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ action, payload }),
+  });
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data?.error || `Gemini request failed (${response.status})`);
+  }
+  return data;
+}
 
 export interface ConversationAnalysisResult {
   overallRiskScore: number; // 0-100
@@ -78,37 +88,7 @@ export const analyzeConversation = async (
   conversationText: string,
   context?: string
 ): Promise<ConversationAnalysisResult> => {
-  const prompt = ANALYSIS_PROMPT +
-    (context ? `\nCONTEXT FROM USER: ${context}\n\n` : '') +
-    conversationText;
-
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      temperature: 0.3,
-      thinkingConfig: { thinkingBudget: 4096 }, // Allocate thinking budget for deeper pattern recognition
-    }
-  });
-
-  const text = response.text || '';
-  
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    console.error("Failed to parse analysis result:", e);
-    // Fallback
-    return {
-      overallRiskScore: 0,
-      riskLevel: 'LOW',
-      summary: 'Error parsing analysis results. Please try again.',
-      patterns: [],
-      timeline: [],
-      redFlags: [],
-      recommendations: []
-    };
-  }
+  return await callGemini("analyzeConversation", { conversationText, context });
 };
 
 // OCR for screenshot uploads
@@ -116,15 +96,6 @@ export const extractTextFromImage = async (
   imageBase64: string,
   mimeType: string
 ): Promise<string> => {
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: {
-      parts: [
-        { inlineData: { mimeType, data: imageBase64 } },
-        { text: 'Extract all text from this chat/message screenshot. Preserve the conversation structure showing who said what. Format as a readable conversation transcript. Ignore UI elements like battery level or signal strength unless relevant.' }
-      ]
-    }
-  });
-
-  return response.text || '';
+  const result = await callGemini("extractTextFromImage", { imageBase64, mimeType });
+  return result?.text || '';
 };

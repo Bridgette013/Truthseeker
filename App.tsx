@@ -19,7 +19,6 @@ import AuthScreen from './components/AuthScreen';
 import PricingModal from './components/PricingModal';
 import QuickExitButton from './components/QuickExitButton';
 import ErrorBoundary from './components/ErrorBoundary';
-import { ShieldAlert } from 'lucide-react';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<UserProfile | undefined>(undefined);
@@ -156,8 +155,8 @@ const App: React.FC = () => {
             {/* Header */}
             <header className="h-16 border-b border-vvv-divider bg-vvv-surface/80 backdrop-blur-xl flex items-center justify-between px-8 z-10 relative">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-vvv-coral/20 to-vvv-purple/20 border border-vvv-purple/30">
-                  <ShieldAlert className="w-6 h-6 text-vvv-purple" />
+                <div className="p-1 rounded-xl overflow-hidden">
+                  <img src="/logo.png" alt="TruthSeeker Logo" className="w-8 h-8 object-cover" />
                 </div>
                 <div>
                   <h1 className="text-xl font-bold tracking-tight text-white font-display">

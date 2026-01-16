@@ -1,17 +1,16 @@
 
 import React from 'react';
 import { AppView, UserProfile, SubscriptionTier } from '../types';
-import { 
-  LayoutDashboard, 
-  Image as ImageIcon, 
-  Video, 
-  Mic, 
-  Search, 
-  Ghost, 
+import {
+  LayoutDashboard,
+  Image as ImageIcon,
+  Video,
+  Mic,
+  Search,
+  Ghost,
   BookOpen,
   LogOut,
   Sparkles,
-  Shield,
   NotebookPen,
   Library,
   Globe,
@@ -56,8 +55,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, user, onLo
       {/* Logo Section */}
       <div className="p-6 relative z-10">
         <div className="flex items-center gap-3 mb-2">
-           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-vvv-coral to-vvv-purple flex items-center justify-center text-white shadow-lg vvv-glow-purple">
-              <Shield className="w-6 h-6" />
+           <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg vvv-glow-purple">
+              <img src="/logo.png" alt="VVV Digitals Logo" className="w-full h-full object-cover" />
            </div>
            <div>
               <span className="font-display font-bold text-xl text-white block leading-none">

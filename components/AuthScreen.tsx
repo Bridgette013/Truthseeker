@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { UserProfile, SubscriptionTier } from '../types';
-import { ShieldCheck, Fingerprint, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Fingerprint, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import QuickExitButton from './QuickExitButton';
 import { logger } from '../services/logger';
 
@@ -56,8 +56,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
         {/* Logo Section */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-vvv-coral to-vvv-purple mb-4 shadow-2xl vvv-glow-purple-lg">
-            <ShieldCheck className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl overflow-hidden mb-4 shadow-2xl vvv-glow-purple-lg">
+            <img src="/logo.png" alt="VVV Digitals Logo" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-4xl font-display font-bold text-white tracking-tight">
             <span className="vvv-gradient-text">VVV</span>Digitals

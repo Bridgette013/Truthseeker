@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { AppView } from '../types';
-import { Shield, FileText, Lock, Mail, Globe } from 'lucide-react';
+import { FileText, Lock, Mail, Globe } from 'lucide-react';
 
 interface StaticPagesProps {
   view: AppView;
@@ -14,26 +14,68 @@ const StaticPages: React.FC<StaticPagesProps> = ({ view }) => {
         return (
           <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
             <div className="text-center mb-10">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-vvv-coral to-vvv-purple mb-4">
-                    <Shield className="w-8 h-8 text-white" />
-                </div>
-                <h2 className="text-3xl font-display font-bold text-white">About VVV Digitals</h2>
-                <p className="text-vvv-muted mt-2">Uncovering truth in the digital age.</p>
+                <h2 className="text-3xl font-display font-bold text-white">Why I Built TruthSeeker</h2>
             </div>
-            
+
+            {/* Founder Image */}
+            <div className="flex justify-center mb-8">
+                <img
+                  src="/brit-founder.jpg"
+                  alt="Brit, Founder of VVV Digitals"
+                  className="w-48 h-48 rounded-2xl object-cover border-2 border-vvv-purple/30 shadow-lg vvv-glow-purple"
+                />
+            </div>
+
             <div className="bg-vvv-surface border border-vvv-divider rounded-xl p-8 space-y-4 text-vvv-text leading-relaxed">
-                <h3 className="text-xl font-bold text-white font-display">Our Mission</h3>
-                <p>
-                    VVV Digitals was founded with a singular purpose: to democratize digital forensics. In an era of Deepfakes, AI-generated personas, and complex online scams, the average person is often left defenseless against sophisticated bad actors.
+                <p className="text-lg italic text-vvv-muted">
+                    I'm not a cybersecurity expert who studied this problem from a distance. I lived it.
                 </p>
+
                 <p>
-                    TruthSeeker, our flagship platform, leverages cutting-edge AI (Gemini Pro/Flash) to analyze media artifacts for signs of manipulation. We believe that safety tools should be accessible, intuitive, and rigorously accurate.
+                    After leaving the escort industry, I became a target. Twelve stalkers over the years. Photos stolen and used on fake profiles. Messages that made my blood run cold because they knew things they shouldn't.
                 </p>
-                
-                <h3 className="text-xl font-bold text-white font-display mt-8">The Technology</h3>
+
                 <p>
-                    We utilize a hybrid analysis approach. While our Automated AI scans for pixel-level inconsistencies and metadata anomalies, we also prioritize education. Our "Guided Mode" teaches users to become investigators themselves, spotting the subtle flaws in deepfakes that machines might miss.
+                    The worst part? When I tried to get help, no one believed me. "You're being paranoid." "That's just a coincidence." "Are you sure you didn't give them your information?"
                 </p>
+
+                <p>
+                    I learned the hard way that when your past makes people uncomfortable, they'll explain away the evidence rather than face the truth. The gaslighting—intentional or not—was almost as damaging as the stalking itself.
+                </p>
+
+                <p>
+                    So I built what I needed: tools to prove I wasn't crazy. To document patterns. To show that the "random" account messaging me used a photo stolen from someone else. To demonstrate that conversations across different platforms were following the same manipulation script.
+                </p>
+
+                <h3 className="text-xl font-bold text-white font-display mt-8">TruthSeeker exists because I know what it's like to:</h3>
+                <ul className="list-disc list-inside space-y-2 ml-4 text-vvv-text">
+                    <li>Need evidence but not know where to start</li>
+                    <li>Be dismissed when you raise concerns</li>
+                    <li>Feel isolated because speaking your truth makes others uncomfortable</li>
+                    <li>Recognize danger that others can't (or won't) see</li>
+                </ul>
+
+                <p className="mt-6">
+                    Whether you're being stalked, catfished, or manipulated—whether it's happening because of your work, your visibility, or just bad luck—you deserve tools that help you trust your instincts and protect yourself.
+                </p>
+
+                <p>
+                    This isn't about paranoia. It's about giving yourself permission to investigate when something feels wrong, even if no one else sees it yet.
+                </p>
+
+                <p className="font-semibold">
+                    I built TruthSeeker because I needed it to exist. Now it's here for anyone else who's ever been told they're imagining things when they know damn well they're not.
+                </p>
+
+                <p className="text-right text-vvv-muted italic mt-6">
+                    — Brit, Founder of VVV Digitals
+                </p>
+
+                <div className="mt-8 pt-6 border-t border-vvv-divider">
+                    <p className="text-sm text-vvv-muted italic">
+                        A note to those who inspired this project: Your patterns are now teachable moments. Your techniques are case studies. Your anonymity was temporary. Every detection feature in TruthSeeker exists because I reverse-engineered your playbook. Consider this my thank-you note.
+                    </p>
+                </div>
             </div>
           </div>
         );
